@@ -1,13 +1,13 @@
 {
     "builds": [{
-        "src": "databaseAI/wsgi.py",
+        "src": "WebApp/wsgi.py",
         "use": "@vercel/python",
-        "config": { "maxLambdaSize": "40mb", "runtime": "python3.9" }
+        "config": { "maxLambdaSize": "15mb", "runtime": "python3.9" }
     }],
     "routes": [
         {
             "src": "/(.*)",
-            "dest": "databaseAI/wsgi.py"
+            "dest": "WebApp/wsgi.py"
         }
     ]
 }
