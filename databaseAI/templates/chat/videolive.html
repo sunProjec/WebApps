@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}
+    
+    <title>Translate</title>
+    <style>
+
+        button {
+            all: unset;
+            display: inline-block;
+            padding: 15px;
+            color: white;
+            text-transform: uppercase;
+            font-family: sans-serif;
+            letter-spacing: 1.5px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 17px;
+            }
+
+            /* Important stuff below */
+            .button {
+            background-color: #48484a;
+            box-shadow: 0 5px 0 #000000;
+            transition:.1s 
+            }
+
+            .button:active {
+            box-shadow: none;
+            transform: translateY(5px);
+            }
+            .button1 {
+            background-color: #4ac9e9;
+            box-shadow: 0 5px 0 #4daed8;
+            transition:.1s 
+            }
+
+            .button1:active {
+            box-shadow: none;
+            transform: translateY(5px);
+            }
+
+            .button2 {
+            background-color: #6f7fe6;
+            box-shadow: 0 5px 0 #4742d7;
+            transition:.1s 
+            }
+
+            .button2:active {
+            box-shadow: none;
+            transform: translateY(5px);
+            }
+        
+            img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            }
+
+           
+
+                body {
+                background:rgb(148, 186, 239);
+                }
+                .block{
+                    display: none;
+                    visibility: visible;
+                }
+
+    h3 { color: #ffffff; font-family: 'Raleway',sans-serif; font-size: 62px; font-weight: 800; line-height: 72px; margin: 0 0 24px; text-align: center; text-transform: uppercase; }
+    h4 { color: #000000e4; font-family: 'Raleway',sans-serif; font-size: 62px; font-weight: 800; line-height: 72px; margin: 0 0 24px; text-align: center; text-transform: uppercase; }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+    
+    
+    <video class="block" autoplay="true"></video>
+    <br /> 
+    <img src="">
+
+    <br /> 
+
+    
+    <button class="button" onclick="loadText()">Translation</button>
+    <button class="button button1"  onclick="loadDoc()">Arrange words</button>
+    <button class="button button2"  onclick="Deletetext()">Delete</button>
+    
+          
+
+    <br /> 
+
+    <h3 id="textsign"></h3>
+    <h4 id="demo"></h4>
+     
+    
+    
+
+    <script>
+        // get video dom element
+        const video = document.querySelector('video');
+
+        // get img dom element
+        const img = document.querySelector('img');
+        
+        
+        // request access to webcam
+        //navigator.mediaDevices.getUserMedia({video: {width: 426, height: 240}}).then((stream) => video.srcObject = stream);
+        navigator.mediaDevices.getUserMedia({video: {width: 600, height: 300,video: true}}).then((stream) => video.srcObject = stream);
+        // returns a frame encoded in base64
+        const getFrame = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            const data = canvas.toDataURL('image/png');
+            return data;
+        }
+
+        let url = `ws://${window.location.host}/ws/socket-server/`
+        const FPS = 3;
+        const ws = new WebSocket(url);
+        
+        ws.onopen = () => {
+            console.log(`Connected to ${url}`);
+            setInterval(() => {
+                ws.send(getFrame());
+            }, 1000 / FPS);
+        }
+
+        ws.onmessage = message => {
+            // set the base64 string to the src tag of the image
+            img.src = message.data;
+        }
+
+        function loadText() {
+        const xhttp = new XMLHttpRequest();  
+        xhttp.onload = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                document.getElementById("textsign").innerHTML = this.responseText;
+            }
+            };  
+        let helloCounter = 1;
+        xhttp.open("GET", "text", true);
+        setInterval(() => {
+            xhttp.open("GET", "text", true);
+            xhttp.send()
+            helloCounter++;},1000)
+    }
+    function loadDoc() {
+        const xhttp = new XMLHttpRequest();
+        xhttp.onload = function() {
+        document.getElementById("demo").innerHTML += this.responseText;
+        }
+        xhttp.open("GET", "text");
+        xhttp.send();
+    }
+    function Deletetext(){
+        document.getElementById('demo').innerHTML = '';
+    }
+
+    
+    
+
+
+    
+    </script>
+
+{% endblock %}

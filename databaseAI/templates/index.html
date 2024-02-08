@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}
+    <title>หน้าแรกเว็บไซต์</title>
+{% endblock %}
+
+{% block content %}
+    <h1 style ="color:red">ยินดีตอนรับ</h1>
+    <p>ประวัติ</p>
+    <p>{{name | upper}}</p>
+    <p>{{age}}</p>
+    {% if age >=  23 %}
+        <h3>คุณเป็นผู้ใหญ่</h3>
+    {% else %}
+        <h3>คุณเป็นวัยรุ่น</h3>
+    {% endif %}
+    {{all_Person}}
+    <h2 class="text-center">ข้อมูลประชากรทั้งหมด</h2>
+    {% if messages %}
+        {% for message in messages %}
+                <div class="alert alert-primary" role="alert">
+                    <strong>{{message}}</strong>
+                </div>
+        {% endfor %}
+    {% endif %}
+
+    <table class="table table-success table-striped">
+        <thead>
+          <tr>
+            <th scope="col">ลำดับ</th>
+            <th scope="col">ชื่อ</th>
+            <th scope="col">อายุ</th>
+            <th scope="col">แก้ไข</th>
+            <th scope="col">ลบ</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for Person in all_Person %}
+                <tr>
+                    <th scope="row">{{Person.id}}</th>
+                    <td>{{Person.name1}}</td>
+                    <td>{{Person.age}}</td>
+                    <td><a href="edit/{{Person.id}}" class ="btn btn-danger">แก้ไข</a></td>
+                    <td><a href="delete/{{Person.id}}" 
+                        class ="btn btn-warning"
+                        onclick="return confirm('คุณต้องการลบ{{Person.name1}} หรือไม่ ?')"
+                        >ลบ</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+      </table>
+{% endblock %}
